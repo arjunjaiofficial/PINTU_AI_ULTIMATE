@@ -22,4 +22,12 @@ class Note(Base):
     __tablename__ = "notes"
 
     id = Column(Integer, primary_key=True, index=True)
-    content = Column(Text, nullable=False)
+    note = Column(Text, nullable=False)
+
+
+class Conversation(Base):
+    __tablename__ = "conversation"
+
+    id = Column(Integer, primary_key=True, index=True)
+    role = Column(String(20), nullable=False)
+    message = Column(Text, nullable=False)

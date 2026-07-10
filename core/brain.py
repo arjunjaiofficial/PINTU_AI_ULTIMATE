@@ -1,4 +1,5 @@
 from openai import OpenAI
+from ai.conversation import remember_chat, get_chat_history
 
 # Connect to local Ollama server
 client = OpenAI(
@@ -19,25 +20,37 @@ Rules:
 - Address the user as "Arjun Jai" when appropriate.
 """
 
+
 def think(user_input):
     try:
+        # Save user's message
+        remember_chat("user", user_input)
+
+        # Load recent conversation
+        history = get_chat_history()
+
+        messages = [
+            {
+                "role": "system",
+                "content": SYSTEM_PROMPT
+            }
+        ]
+
+        messages.extend(history)
+
         response = client.chat.completions.create(
             model="qwen2.5:3b",
-            messages=[
-                {
-                    "role": "system",
-                    "content": SYSTEM_PROMPT
-                },
-                {
-                    "role": "user",
-                    "content": user_input
-                }
-            ],
+            messages=messages,
             temperature=0.7,
             max_tokens=300
         )
 
-        return response.choices[0].message.content.strip()
+        reply = response.choices[0].message.content.strip()
+
+        # Save AI response
+        remember_chat("assistant", reply)
+
+        return reply
 
     except Exception as e:
         return f"Error: {str(e)}"

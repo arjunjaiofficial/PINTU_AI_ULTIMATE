@@ -5,6 +5,5 @@ engine.setProperty("rate", 170)
 
 
 def speak(text):
-    print("PINTU AI:", text)
     engine.say(str(text))
     engine.runAndWait()
