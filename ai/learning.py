@@ -1,7 +1,9 @@
-from data.memory import remember, recall
+from database.memory import save_knowledge, get_knowledge as db_get_knowledge
+
 
 def learn(topic, information):
-    remember(f"knowledge_{topic.lower()}", information)
+    save_knowledge(topic, information)
+
 
 def get_knowledge(topic):
-    return recall(f"knowledge_{topic.lower()}")
+    return db_get_knowledge(topic)

@@ -1,23 +1,43 @@
-def get_response(message):
-    message = message.lower().strip()
+from openai import OpenAI
 
-    if message in ["hi", "hello", "hey"]:
-        return "Hello Arjun Jai! 😊"
+# Connect to local Ollama server
+client = OpenAI(
+    base_url="http://127.0.0.1:11434/v1",
+    api_key="ollama",
+    timeout=60
+)
 
-    elif "how are you" in message:
-        return "I am doing great. Ready to help you anytime!"
+SYSTEM_PROMPT = """
+You are PINTU AI.
 
-    elif "who are you" in message:
-        return (
-            "I am PINTU AI Ultimate.\n"
-            "Your Personal Intelligent Assistant."
+You are a smart, friendly, and helpful personal AI assistant.
+
+Rules:
+- Answer clearly and naturally.
+- Keep answers concise unless the user asks for details.
+- If you don't know something, say so honestly.
+- Address the user as "Arjun Jai" when appropriate.
+"""
+
+def think(user_input):
+    try:
+        response = client.chat.completions.create(
+            model="qwen2.5:3b",
+            messages=[
+                {
+                    "role": "system",
+                    "content": SYSTEM_PROMPT
+                },
+                {
+                    "role": "user",
+                    "content": user_input
+                }
+            ],
+            temperature=0.7,
+            max_tokens=300
         )
 
-    elif "your name" in message:
-        return "My name is PINTU AI."
+        return response.choices[0].message.content.strip()
 
-    elif "thank you" in message:
-        return "You're welcome, Arjun Jai!"
-
-    else:
-        return "I am still learning. Please teach me more."
+    except Exception as e:
+        return f"Error: {str(e)}"
